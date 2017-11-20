@@ -12,7 +12,7 @@ RSpec.describe PeopleController, type: :controller do
   end
 
   describe "GET show" do
-    subject { get :show, id: person.id }
+    subject { get :show, id: person.id, format: :json }
     let!(:person) { create(:person) }
 
     it "should return the person" do

@@ -1,13 +1,15 @@
 class PeopleController < ApplicationController
 
+  respond_to :json
+
   def index
     @people = Person.all
-    render json: @people
+    respond_with @people
   end
 
   def show
     @person = Person.find(params[:id])
-    render json: @person
+    respond_with @person
   end
 
 end
