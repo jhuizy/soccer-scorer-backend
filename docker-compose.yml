@@ -3,12 +3,14 @@ services:
   db: &DB
     image: postgres
     ports: 
-      - "5432:5432"
+      - 5433
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: develop
+      POSTGRES_PASSWORD: develop
   testdb:
     <<: *DB
+    ports:
+      - 5432
     environment:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
@@ -21,3 +23,4 @@ services:
       - "3000:3000"
     depends_on:
       - testdb
+      - db
