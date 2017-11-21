@@ -3,3 +3,4 @@ class Team < ApplicationRecord
   has_many :players
   has_many :person, through: :players
 end
+  

@@ -3,24 +3,24 @@ services:
   db: &DB
     image: postgres
     ports: 
-      - 5433
+      - 5432
     environment:
       POSTGRES_USER: develop
       POSTGRES_PASSWORD: develop
   testdb:
     <<: *DB
     ports:
-      - 5432
+      - 5433
     environment:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
   web:
     build: .
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: bundle exec rails s -p 4000 -b '0.0.0.0'
     volumes:
       - .:/app
     ports:
-      - "3000:3000"
+      - "4000:4000"
     depends_on:
       - testdb
       - db
