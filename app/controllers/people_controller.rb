@@ -1,7 +1,6 @@
 class PeopleController < ApplicationController
 
-  before_filter :find_person, only: [:show, :update, :destroy]
-  before_filter :person_params, only: [:create, :update]
+  before_action :find_person, only: [:show, :update, :destroy]
 
   def index
     @people = Person.all
@@ -13,12 +12,12 @@ class PeopleController < ApplicationController
   end
 
   def create
-    @person = Person.create(@person_params)
+    @person = Person.create(person_params)
     render json: @person
   end
 
   def update
-    @person.update(@person_params)
+    @person.update(person_params)
     render json: @person.reload
   end
 
@@ -34,7 +33,7 @@ class PeopleController < ApplicationController
   end
 
   def person_params
-    @person_params = params.require(:person).permit(:firstname, :lastname, :dob)
+    params.require(:person).permit(:firstname, :lastname, :dob)
   end
 
 end
