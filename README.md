@@ -1,24 +1,8 @@
-# README
+## Getting Started
+To get up and running you will need docker and docker-compose
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- build the docker compose environment `docker-compose build`
+- to set up the databases use `docker-compose run --rm web bin/setup`
+- to run tests use `docker-compose run --rm web rspec`
+- to run the dev environment use `docker-compose up`
+- changes to the `Gemfile`, `Gemfile.lock`, `Dockerfile` or `docker-compose.yml` will need recreating via `docker-compose build` or by specifying the `--build` flag when running
