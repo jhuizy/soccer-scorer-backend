@@ -17,7 +17,7 @@ services:
       POSTGRES_USER: test
       POSTGRES_PASSWORD: test
   web:
-    build: .
+    build: dev
     command: bundle exec rails s -p 4000 -b '0.0.0.0'
     volumes:
       - .:/app
