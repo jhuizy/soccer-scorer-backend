@@ -1,0 +1,29 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "Installing docker-compose"
+      - curl -L https://github.com/docker/compose/releases/download/1.20.1/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose 
+      - chmod +x /usr/local/bin/docker-compose
+  pre_build:
+    commands:
+      - echo "Logging into AWS ECR"
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - echo "Updating docker-compose file"
+      - cat docker-compose.yml | sed 's/build: \\./image: $IMAGE_REPO:$IMAGE_TAG/g' > docker-compose-test.yml 
+  build:
+    commands:
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c1-6)
+      - echo "Building docker image"
+      - docker build -t $IMAGE_REPO:$IMAGE_TAG .
+      - echo "Running tests"
+      - docker-compose -f docker-compose-test.yml up --abort-on-container-exit
+  post_build:
+    commands:
+      - echo "Tagging image"
+      - docker tag $IMAGE_REPO:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO:$IMAGE_TAG
+      - echo "Pushing image to ECR"
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO:$IMAGE_TAG
+      - echo "Updating SSM parameter"
+      - STACK_NAME=soccer-scorer-backend
+      - aws ssm put-parameter --name "/$STACK_NAME/image" --value $IMAGE_TAG --type String --overwrite --region $AWS_DEFAULT_REGION

@@ -1,28 +1,26 @@
-version: '3'
+version: '2.1'
 services:
-  db: &DB
+  db: 
     image: postgres
     ports: 
       - 5432
     volumes:
-      - /data/soccer-scorer/develop:/var/lib/postgresql/data
+      - ./scripts/init-test-user-db.sh:/docker-entrypoint-initdb.d/init-test-user-db.sh
     environment:
       POSTGRES_USER: develop
       POSTGRES_PASSWORD: develop
-  testdb:
-    <<: *DB
-    volumes:
-      - /data/soccer-scorer/test:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
   web:
     build: .
-    command: bundle exec rails s -p 4000 -b '0.0.0.0'
+    command: sh scripts/run-test.sh 
     volumes:
       - .:/app
     ports:
-      - "4000:4000"
+      - "3000:3000"
     depends_on:
-      - testdb
-      - db
+      db:
+        condition: service_healthy
